@@ -137,34 +137,10 @@ async function submitQuery() {
         stage.classList.remove('active', 'completed');
     });
 
-    // Start progress updates
-    let stage = 1;
-    progressStages[0].classList.add('active'); // Activate first stage
-
-    const progressInterval = setInterval(() => {
-        if (stage === 1) {
-            updateLoadingText('⏳ Stage 1/3: Council LLMs generating independent answers...');
-            progressStages[0].classList.remove('active');
-            progressStages[0].classList.add('completed');
-            progressStages[1].classList.add('active');
-            stage = 2;
-        } else if (stage === 2) {
-            updateLoadingText('⏳ Stage 2/3: Council LLMs reviewing and ranking answers...');
-            progressStages[1].classList.remove('active');
-            progressStages[1].classList.add('completed');
-            progressStages[2].classList.add('active');
-            stage = 3;
-        } else if (stage === 3) {
-            updateLoadingText('⏳ Stage 3/3: Chairman synthesizing final answer...');
-            stage = 4;
-        } else {
-            updateLoadingText('⏳ Finalizing results...');
-        }
-    }, 8000); // Update every 8 seconds
-
     try {
-        // Initial message
-        updateLoadingText('⏳ Stage 1/3: Council LLMs generating independent answers...');
+        // Show all stages as active (processing happening on backend)
+        progressStages.forEach(stage => stage.classList.add('active'));
+        updateLoadingText('⏳ Processing all 3 stages... This takes 2-3 minutes. Watch the CMD windows to see real-time progress!');
 
         const response = await fetch(API.council, {
             method: 'POST',
@@ -173,9 +149,6 @@ async function submitQuery() {
             },
             body: JSON.stringify({ query })
         });
-
-        // Stop progress updates
-        clearInterval(progressInterval);
 
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -193,7 +166,7 @@ async function submitQuery() {
         updateLoadingText('✅ All stages completed! Displaying results...');
 
         // Small delay to show success message
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         // Hide loading
         elements.loading.classList.add('hidden');
@@ -205,7 +178,6 @@ async function submitQuery() {
         elements.resultsSection.scrollIntoView({ behavior: 'smooth' });
 
     } catch (error) {
-        clearInterval(progressInterval);
         elements.loading.classList.add('hidden');
         showError(`Failed to complete council workflow: ${error.message}`);
     } finally {
