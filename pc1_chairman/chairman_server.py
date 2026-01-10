@@ -38,8 +38,8 @@ def call_ollama(model: str, prompt: str) -> str:
                 "prompt": prompt,
                 "stream": False,
                 "options": {
-                    "temperature": 0.7,      # Lower = faster, more focused
-                    "num_predict": 200,      # Limit response length (Chairman gets more)
+                    "temperature": 0.8,      # Increased for faster sampling
+                    "num_predict": 150,      # Reduced for faster generation
                     "top_k": 40,             # Reduce sampling space
                     "top_p": 0.9             # Nucleus sampling
                 }
