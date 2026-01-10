@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Council - Local Deployment</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 LLM Council</h1>
+            <p class="subtitle">Distributed Multi-LLM Collaboration System</p>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-label">PC1 Chairman:</span>
+                    <span id="pc1-status" class="status-indicator unknown">⚫ Unknown</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">PC2 Council:</span>
+                    <span id="pc2-status" class="status-indicator unknown">⚫ Unknown</span>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <!-- Query Input Section -->
+            <section class="query-section">
+                <h2>Submit Query to Council</h2>
+                <textarea
+                    id="query-input"
+                    placeholder="Enter your question here... (e.g., 'What is artificial intelligence and how does it work?')"
+                    rows="4"
+                ></textarea>
+                <div class="button-group">
+                    <button id="submit-btn" class="btn btn-primary">Submit to Council</button>
+                    <button id="clear-btn" class="btn btn-secondary">Clear Results</button>
+                </div>
+            </section>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="loading hidden">
+                <div class="spinner"></div>
+                <p id="loading-text">Processing your query through the council...</p>
+            </div>
+
+            <!-- Results Section -->
+            <section id="results-section" class="results-section hidden">
+                <h2>Council Results</h2>
+
+                <!-- Query Display -->
+                <div class="result-card">
+                    <h3>📝 Query</h3>
+                    <div id="display-query" class="query-display"></div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="stage1">
+                        Stage 1: First Opinions
+                        <span id="stage1-count" class="badge">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="stage2">
+                        Stage 2: Reviews
+                        <span id="stage2-count" class="badge">0</span>
+                    </button>
+                    <button class="tab-btn" data-tab="stage3">
+                        Stage 3: Final Answer
+                    </button>
+                </div>
+
+                <!-- Tab Contents -->
+                <div class="tab-content">
+                    <!-- Stage 1: First Opinions -->
+                    <div id="stage1" class="tab-panel active">
+                        <div class="panel-header">
+                            <p>Independent answers from each council member:</p>
+                        </div>
+                        <div id="stage1-content" class="answers-grid"></div>
+                    </div>
+
+                    <!-- Stage 2: Reviews -->
+                    <div id="stage2" class="tab-panel">
+                        <div class="panel-header">
+                            <p>Anonymous peer reviews and rankings:</p>
+                        </div>
+                        <div id="stage2-content" class="reviews-grid"></div>
+                    </div>
+
+                    <!-- Stage 3: Final Answer -->
+                    <div id="stage3" class="tab-panel">
+                        <div class="panel-header">
+                            <p>Synthesized final answer from the Chairman:</p>
+                        </div>
+                        <div id="stage3-content" class="final-answer"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Display -->
+            <div id="error-section" class="error-section hidden">
+                <h3>⚠️ Errors</h3>
+                <div id="error-content"></div>
+            </div>
+        </main>
+
+        <footer>
+            <p>LLM Council - Educational Project</p>
+            <p class="small">Using Ollama for local LLM inference</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
