@@ -44,7 +44,52 @@ User Query → Frontend Coordinator
 - **PC2 Council:** `llama3.2:3b`, `mistral:7b`, `phi3:mini` (or any 3+ models)
 - **PC1 Chairman:** `llama3.2:3b` (or any model)
 
-## Quick Start
+## Quick Start (Windows)
+
+Each folder has just **2 files** you need:
+- **setup.bat** - Run once to install everything
+- **launcher.bat** - Run every time to start the server
+
+### Step 1: Setup (First Time Only)
+
+Just double-click these files in order:
+
+1. **Double-click** `pc1_chairman/setup.bat`
+   - Wait for installation to complete
+
+2. **Double-click** `pc2_council/setup.bat`
+   - Wait 10-20 minutes (downloads 3 large models)
+
+3. **Double-click** `frontend/setup.bat`
+   - Quick installation
+
+### Step 2: Configure Frontend
+
+Edit `frontend/coordinator.py` lines 15-16 with your PCs' IP addresses:
+```python
+PC1_CHAIRMAN_URL = "http://192.168.1.100:5002"  # Replace with PC1's IP
+PC2_COUNCIL_URL = "http://192.168.1.101:5001"   # Replace with PC2's IP
+```
+
+To find IP addresses, open Command Prompt and type: `ipconfig`
+
+### Step 3: Launch Servers
+
+Just double-click these files in order:
+
+1. **Double-click** `pc2_council/launcher.bat` (keep window open)
+2. **Double-click** `pc1_chairman/launcher.bat` (keep window open)
+3. **Double-click** `frontend/launcher.bat` (keep window open)
+
+### Step 4: Use the System
+
+Open your browser to: **http://localhost:5000**
+
+**That's it!** Submit a query and watch the council work.
+
+---
+
+### Alternative: Manual Command Line
 
 ### 1. Install Ollama on Both PCs
 
@@ -125,23 +170,36 @@ python coordinator.py
 
 ```
 GenIA/
-├── pc1_chairman/          # Runs on PC1
-│   ├── chairman_server.py # Chairman LLM API
-│   ├── requirements.txt
-│   └── README.md
-├── pc2_council/           # Runs on PC2
-│   ├── council_server.py  # Council LLMs API
-│   ├── requirements.txt
-│   └── README.md
-├── frontend/              # Can run on either PC
-│   ├── coordinator.py     # Main coordinator
-│   ├── requirements.txt
-│   ├── static/
-│   │   ├── index.html
-│   │   ├── style.css
-│   │   └── script.js
-│   └── README.md
-└── README.md             # This file
+├── README.md                  # Main documentation
+├── HOW_TO_RUN.md             # Simple getting started guide
+├── SETUP_GUIDE.md            # Detailed setup instructions
+├── QUICK_REFERENCE.md        # Quick reference card
+├── test_setup.py             # Automated testing script
+│
+├── pc1_chairman/             # 👉 RUNS ON PC1
+│   ├── chairman_server.py    # Chairman LLM server
+│   ├── setup.bat             # Installer (run once)
+│   ├── launcher.bat          # Launcher (run always)
+│   ├── requirements.txt      # Dependencies
+│   └── README.md            # PC1 docs
+│
+├── pc2_council/              # 👉 RUNS ON PC2
+│   ├── council_server.py     # Council LLMs server (3+ models)
+│   ├── setup.bat             # Installer (run once)
+│   ├── launcher.bat          # Launcher (run always)
+│   ├── requirements.txt      # Dependencies
+│   └── README.md            # PC2 docs
+│
+└── frontend/                 # 👉 RUNS ON EITHER PC
+    ├── coordinator.py        # Main coordinator server
+    ├── setup.bat             # Installer (run once)
+    ├── launcher.bat          # Launcher (run always)
+    ├── requirements.txt      # Dependencies
+    ├── README.md            # Frontend docs
+    └── static/
+        ├── index.html        # Web interface
+        ├── style.css         # Styling
+        └── script.js         # JavaScript logic
 ```
 
 ## Key Design Decisions
