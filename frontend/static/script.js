@@ -129,9 +129,42 @@ async function submitQuery() {
     elements.resultsSection.classList.add('hidden');
     elements.errorSection.classList.add('hidden');
 
+    // Get progress stage elements
+    const progressStages = document.querySelectorAll('.progress-stage');
+
+    // Reset all stages
+    progressStages.forEach(stage => {
+        stage.classList.remove('active', 'completed');
+    });
+
+    // Start progress updates
+    let stage = 1;
+    progressStages[0].classList.add('active'); // Activate first stage
+
+    const progressInterval = setInterval(() => {
+        if (stage === 1) {
+            updateLoadingText('⏳ Stage 1/3: Council LLMs generating independent answers...');
+            progressStages[0].classList.remove('active');
+            progressStages[0].classList.add('completed');
+            progressStages[1].classList.add('active');
+            stage = 2;
+        } else if (stage === 2) {
+            updateLoadingText('⏳ Stage 2/3: Council LLMs reviewing and ranking answers...');
+            progressStages[1].classList.remove('active');
+            progressStages[1].classList.add('completed');
+            progressStages[2].classList.add('active');
+            stage = 3;
+        } else if (stage === 3) {
+            updateLoadingText('⏳ Stage 3/3: Chairman synthesizing final answer...');
+            stage = 4;
+        } else {
+            updateLoadingText('⏳ Finalizing results...');
+        }
+    }, 8000); // Update every 8 seconds
+
     try {
-        // Stage 1: Answers
-        updateLoadingText('Stage 1: Requesting answers from council LLMs...');
+        // Initial message
+        updateLoadingText('⏳ Stage 1/3: Council LLMs generating independent answers...');
 
         const response = await fetch(API.council, {
             method: 'POST',
@@ -141,11 +174,26 @@ async function submitQuery() {
             body: JSON.stringify({ query })
         });
 
+        // Stop progress updates
+        clearInterval(progressInterval);
+
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
         const data = await response.json();
+
+        // Mark all stages as completed
+        progressStages.forEach(stage => {
+            stage.classList.remove('active');
+            stage.classList.add('completed');
+        });
+
+        // Success message
+        updateLoadingText('✅ All stages completed! Displaying results...');
+
+        // Small delay to show success message
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Hide loading
         elements.loading.classList.add('hidden');
@@ -157,6 +205,7 @@ async function submitQuery() {
         elements.resultsSection.scrollIntoView({ behavior: 'smooth' });
 
     } catch (error) {
+        clearInterval(progressInterval);
         elements.loading.classList.add('hidden');
         showError(`Failed to complete council workflow: ${error.message}`);
     } finally {
