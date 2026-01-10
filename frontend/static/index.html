@@ -9,16 +9,48 @@
 <body>
     <div class="container">
         <header>
-            <h1>🤖 LLM Council</h1>
+            <div class="header-top">
+                <h1>🤖 LLM Council</h1>
+                <button id="theme-toggle" class="theme-toggle" title="Toggle Dark/Light Mode">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
             <p class="subtitle">Distributed Multi-LLM Collaboration System</p>
-            <div class="status-bar">
-                <div class="status-item">
-                    <span class="status-label">PC1 Chairman:</span>
-                    <span id="pc1-status" class="status-indicator unknown">⚫ Unknown</span>
+
+            <!-- Enhanced Health Dashboard -->
+            <div class="health-dashboard">
+                <div class="health-card">
+                    <div class="health-header">
+                        <span class="health-title">PC1 Chairman</span>
+                        <span id="pc1-status" class="status-badge unknown">⚫ Unknown</span>
+                    </div>
+                    <div class="health-details">
+                        <div class="health-detail">
+                            <span class="detail-label">Model:</span>
+                            <span id="pc1-model" class="detail-value">-</span>
+                        </div>
+                        <div class="health-detail">
+                            <span class="detail-label">Ollama:</span>
+                            <span id="pc1-ollama" class="detail-value">-</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="status-item">
-                    <span class="status-label">PC2 Council:</span>
-                    <span id="pc2-status" class="status-indicator unknown">⚫ Unknown</span>
+
+                <div class="health-card">
+                    <div class="health-header">
+                        <span class="health-title">PC2 Council</span>
+                        <span id="pc2-status" class="status-badge unknown">⚫ Unknown</span>
+                    </div>
+                    <div class="health-details">
+                        <div class="health-detail">
+                            <span class="detail-label">Models:</span>
+                            <span id="pc2-models" class="detail-value">-</span>
+                        </div>
+                        <div class="health-detail">
+                            <span class="detail-label">Ollama:</span>
+                            <span id="pc2-ollama" class="detail-value">-</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
@@ -36,7 +68,36 @@
                     <button id="submit-btn" class="btn btn-primary">Submit to Council</button>
                     <button id="clear-btn" class="btn btn-secondary">Clear Results</button>
                 </div>
+
+                <!-- Query History -->
+                <div id="history-section" class="history-section hidden">
+                    <h3>Recent Queries</h3>
+                    <div id="history-list" class="history-list"></div>
+                </div>
             </section>
+
+            <!-- Performance Metrics -->
+            <div id="performance-section" class="performance-section hidden">
+                <h3>⏱️ Performance Metrics</h3>
+                <div class="performance-grid">
+                    <div class="performance-card">
+                        <div class="perf-label">Stage 1 (Answers)</div>
+                        <div id="perf-stage1" class="perf-value">-</div>
+                    </div>
+                    <div class="performance-card">
+                        <div class="perf-label">Stage 2 (Reviews)</div>
+                        <div id="perf-stage2" class="perf-value">-</div>
+                    </div>
+                    <div class="performance-card">
+                        <div class="perf-label">Stage 3 (Synthesis)</div>
+                        <div id="perf-stage3" class="perf-value">-</div>
+                    </div>
+                    <div class="performance-card total">
+                        <div class="perf-label">Total Time</div>
+                        <div id="perf-total" class="perf-value">-</div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Loading Indicator -->
             <div id="loading" class="loading hidden">
@@ -107,6 +168,9 @@
                     <div id="stage3" class="tab-panel">
                         <div class="panel-header">
                             <p>Synthesized final answer from the Chairman:</p>
+                            <button id="copy-final-btn" class="btn-copy hidden" title="Copy to clipboard">
+                                📋 Copy Final Answer
+                            </button>
                         </div>
                         <div id="stage3-content" class="final-answer"></div>
                     </div>
