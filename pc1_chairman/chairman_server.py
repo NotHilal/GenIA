@@ -36,7 +36,13 @@ def call_ollama(model: str, prompt: str) -> str:
             json={
                 "model": model,
                 "prompt": prompt,
-                "stream": False
+                "stream": False,
+                "options": {
+                    "temperature": 0.7,      # Lower = faster, more focused
+                    "num_predict": 200,      # Limit response length (Chairman gets more)
+                    "top_k": 40,             # Reduce sampling space
+                    "top_p": 0.9             # Nucleus sampling
+                }
             },
             timeout=120
         )

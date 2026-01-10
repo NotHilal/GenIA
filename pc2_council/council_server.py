@@ -9,6 +9,7 @@ from flask_cors import CORS
 import requests
 import random
 from typing import List, Dict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 app = Flask(__name__)
 CORS(app)
@@ -42,7 +43,13 @@ def call_ollama(model: str, prompt: str) -> str:
             json={
                 "model": model,
                 "prompt": prompt,
-                "stream": False
+                "stream": False,
+                "options": {
+                    "temperature": 0.7,      # Lower = faster, more focused
+                    "num_predict": 150,      # Limit response length
+                    "top_k": 40,             # Reduce sampling space
+                    "top_p": 0.9             # Nucleus sampling
+                }
             },
             timeout=120
         )
@@ -96,25 +103,39 @@ def generate_answers():
     print(f"STAGE 1: Generating answers for query: {query}")
     print(f"{'='*60}\n")
 
-    answers = []
-
-    for model in COUNCIL_MODELS:
+    def generate_single_answer(model):
+        """Generate answer from a single model"""
         print(f"Requesting answer from {model}...")
 
-        prompt = f"""You are participating in an LLM council. Answer the following query clearly and concisely.
+        prompt = f"""You are participating in an LLM council. Answer the following query briefly and concisely.
 
 Query: {query}
 
-Provide your answer:"""
+Provide your answer (be brief):"""
 
         response = call_ollama(model, prompt)
 
-        answers.append({
+        print(f"  ✓ {model} responded ({len(response)} chars)\n")
+
+        return {
             "model": model,
             "response": response
-        })
+        }
 
-        print(f"  ✓ {model} responded ({len(response)} chars)\n")
+    # Run all models in parallel
+    answers = []
+    with ThreadPoolExecutor(max_workers=len(COUNCIL_MODELS)) as executor:
+        # Submit all tasks
+        future_to_model = {executor.submit(generate_single_answer, model): model for model in COUNCIL_MODELS}
+
+        # Collect results as they complete
+        for future in as_completed(future_to_model):
+            try:
+                answer = future.result()
+                answers.append(answer)
+            except Exception as e:
+                model = future_to_model[future]
+                print(f"  ✗ {model} failed: {str(e)}\n")
 
     print(f"Stage 1 complete: {len(answers)} answers generated\n")
 
@@ -161,9 +182,8 @@ def review_answers():
     print(f"STAGE 2: Reviewing answers")
     print(f"{'='*60}\n")
 
-    reviews = []
-
-    for model in COUNCIL_MODELS:
+    def generate_single_review(model):
+        """Generate review from a single model"""
         print(f"Model {model} reviewing answers...")
 
         # Create anonymized list of answers (excluding the reviewer's own answer)
@@ -184,23 +204,15 @@ def review_answers():
             for i, ans in enumerate(anonymized_answers)
         ])
 
-        prompt = f"""You are reviewing answers from other LLMs. Your task is to rank them based on accuracy, clarity, and insight.
+        prompt = f"""You are reviewing answers from other LLMs. Rank them briefly based on accuracy and clarity.
 
 Original Query: {query}
 
-Here are the answers to review:
+Answers to review:
 
 {answers_text}
 
-Rank these answers from best (1) to worst ({len(anonymized_answers)}). For each answer, provide:
-1. The answer number
-2. Your rank for it (1 = best)
-3. Brief reasoning (1-2 sentences)
-
-Format your response as:
-Answer X: Rank Y - Reasoning here
-Answer X: Rank Y - Reasoning here
-...
+Rank from best (1) to worst ({len(anonymized_answers)}). Be brief.
 
 Provide your rankings:"""
 
@@ -215,13 +227,28 @@ Provide your rankings:"""
                 "reasoning": "See full review"
             })
 
-        reviews.append({
+        print(f"  ✓ {model} completed review\n")
+
+        return {
             "reviewer": model,
             "review_text": review_response,
             "rankings": rankings
-        })
+        }
 
-        print(f"  ✓ {model} completed review\n")
+    # Run all reviews in parallel
+    reviews = []
+    with ThreadPoolExecutor(max_workers=len(COUNCIL_MODELS)) as executor:
+        # Submit all review tasks
+        future_to_model = {executor.submit(generate_single_review, model): model for model in COUNCIL_MODELS}
+
+        # Collect results as they complete
+        for future in as_completed(future_to_model):
+            try:
+                review = future.result()
+                reviews.append(review)
+            except Exception as e:
+                model = future_to_model[future]
+                print(f"  ✗ {model} review failed: {str(e)}\n")
 
     print(f"Stage 2 complete: {len(reviews)} reviews generated\n")
 
