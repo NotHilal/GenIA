@@ -13,8 +13,8 @@ app = Flask(__name__, static_folder='static', template_folder='static')
 CORS(app)
 
 # Configuration - EDIT THESE TO MATCH YOUR SETUP
-PC1_CHAIRMAN_URL = "http://localhost:5002"  # PC1 Chairman server
-PC2_COUNCIL_URL = "http://localhost:5001"   # PC2 Council server
+PC1_CHAIRMAN_URL = "http://172.20.10.9:5002"  # PC1 Chairman server (update with PC1's actual IP)
+PC2_COUNCIL_URL = "http://localhost:5001"     # PC2 Council server (localhost if frontend is on PC2)
 PORT = 5000  # Frontend server port
 
 # For distributed setup, replace with actual IPs:
@@ -126,7 +126,7 @@ def run_stage3():
         response = requests.post(
             f"{PC1_CHAIRMAN_URL}/synthesize",
             json={"query": query, "answers": answers, "reviews": reviews},
-            timeout=180
+            timeout=300  # Increased to 5 minutes for Chairman synthesis
         )
         response.raise_for_status()
         stage3_data = response.json()
