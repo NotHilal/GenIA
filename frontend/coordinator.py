@@ -61,6 +61,81 @@ def health_check():
 
     return jsonify(health_status)
 
+@app.route('/stage1', methods=['POST'])
+def run_stage1():
+    """Stage 1: Get answers from council"""
+    data = request.get_json()
+    query = data.get('query', '')
+
+    if not query:
+        return jsonify({"error": "No query provided"}), 400
+
+    print(f"\n→ Stage 1: Requesting answers from council LLMs...")
+    try:
+        response = requests.post(
+            f"{PC2_COUNCIL_URL}/answer",
+            json={"query": query},
+            timeout=180
+        )
+        response.raise_for_status()
+        stage1_data = response.json()
+        print(f"  ✓ Received {len(stage1_data.get('answers', []))} answers\n")
+        return jsonify(stage1_data)
+    except Exception as e:
+        print(f"  ✗ Stage 1 error: {str(e)}\n")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/stage2', methods=['POST'])
+def run_stage2():
+    """Stage 2: Get reviews from council"""
+    data = request.get_json()
+    query = data.get('query', '')
+    answers = data.get('answers', [])
+
+    if not query or not answers:
+        return jsonify({"error": "Query and answers required"}), 400
+
+    print(f"\n→ Stage 2: Requesting reviews from council LLMs...")
+    try:
+        response = requests.post(
+            f"{PC2_COUNCIL_URL}/review",
+            json={"query": query, "answers": answers},
+            timeout=180
+        )
+        response.raise_for_status()
+        stage2_data = response.json()
+        print(f"  ✓ Received {len(stage2_data.get('reviews', []))} reviews\n")
+        return jsonify(stage2_data)
+    except Exception as e:
+        print(f"  ✗ Stage 2 error: {str(e)}\n")
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/stage3', methods=['POST'])
+def run_stage3():
+    """Stage 3: Get final synthesis from Chairman"""
+    data = request.get_json()
+    query = data.get('query', '')
+    answers = data.get('answers', [])
+    reviews = data.get('reviews', [])
+
+    if not query or not answers:
+        return jsonify({"error": "Query and answers required"}), 400
+
+    print(f"\n→ Stage 3: Requesting final synthesis from Chairman...")
+    try:
+        response = requests.post(
+            f"{PC1_CHAIRMAN_URL}/synthesize",
+            json={"query": query, "answers": answers, "reviews": reviews},
+            timeout=180
+        )
+        response.raise_for_status()
+        stage3_data = response.json()
+        print(f"  ✓ Received final synthesis\n")
+        return jsonify(stage3_data)
+    except Exception as e:
+        print(f"  ✗ Stage 3 error: {str(e)}\n")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/council', methods=['POST'])
 def run_council():
     """

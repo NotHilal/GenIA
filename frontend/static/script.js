@@ -4,6 +4,9 @@
 const API = {
     health: '/health',
     council: '/council',
+    stage1: '/stage1',
+    stage2: '/stage2',
+    stage3: '/stage3',
     config: '/config'
 };
 
@@ -138,11 +141,16 @@ async function submitQuery() {
     });
 
     try {
-        // Show all stages as active (processing happening on backend)
-        progressStages.forEach(stage => stage.classList.add('active'));
-        updateLoadingText('⏳ Processing all 3 stages... This takes 2-3 minutes. Watch the CMD windows to see real-time progress!');
+        let answers = [];
+        let reviews = [];
+        let finalAnswer = '';
+        let chairmanModel = '';
 
-        const response = await fetch(API.council, {
+        // STAGE 1: Get answers
+        progressStages[0].classList.add('active');
+        updateLoadingText('⏳ Stage 1/3: Council LLMs generating independent answers...');
+
+        const stage1Response = await fetch(API.stage1, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -150,17 +158,63 @@ async function submitQuery() {
             body: JSON.stringify({ query })
         });
 
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        if (!stage1Response.ok) {
+            throw new Error(`Stage 1 failed: ${stage1Response.status}`);
         }
 
-        const data = await response.json();
+        const stage1Data = await stage1Response.json();
+        answers = stage1Data.answers || [];
 
-        // Mark all stages as completed
-        progressStages.forEach(stage => {
-            stage.classList.remove('active');
-            stage.classList.add('completed');
+        // Stage 1 complete
+        progressStages[0].classList.remove('active');
+        progressStages[0].classList.add('completed');
+
+        // STAGE 2: Get reviews
+        progressStages[1].classList.add('active');
+        updateLoadingText('⏳ Stage 2/3: Council LLMs reviewing and ranking answers...');
+
+        const stage2Response = await fetch(API.stage2, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query, answers })
         });
+
+        if (!stage2Response.ok) {
+            throw new Error(`Stage 2 failed: ${stage2Response.status}`);
+        }
+
+        const stage2Data = await stage2Response.json();
+        reviews = stage2Data.reviews || [];
+
+        // Stage 2 complete
+        progressStages[1].classList.remove('active');
+        progressStages[1].classList.add('completed');
+
+        // STAGE 3: Get synthesis
+        progressStages[2].classList.add('active');
+        updateLoadingText('⏳ Stage 3/3: Chairman synthesizing final answer...');
+
+        const stage3Response = await fetch(API.stage3, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query, answers, reviews })
+        });
+
+        if (!stage3Response.ok) {
+            throw new Error(`Stage 3 failed: ${stage3Response.status}`);
+        }
+
+        const stage3Data = await stage3Response.json();
+        finalAnswer = stage3Data.final_answer || '';
+        chairmanModel = stage3Data.chairman_model || '';
+
+        // Stage 3 complete
+        progressStages[2].classList.remove('active');
+        progressStages[2].classList.add('completed');
 
         // Success message
         updateLoadingText('✅ All stages completed! Displaying results...');
@@ -172,7 +226,15 @@ async function submitQuery() {
         elements.loading.classList.add('hidden');
 
         // Display results
-        displayResults(data);
+        const fullResults = {
+            query: query,
+            stage1_answers: answers,
+            stage2_reviews: reviews,
+            stage3_final: finalAnswer,
+            chairman_model: chairmanModel,
+            errors: []
+        };
+        displayResults(fullResults);
 
         // Scroll to results
         elements.resultsSection.scrollIntoView({ behavior: 'smooth' });
