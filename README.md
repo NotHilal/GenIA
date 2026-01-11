@@ -234,6 +234,62 @@ http://localhost:5000
 
 ---
 
+## Bonus Features Implemented
+
+In addition to the core requirements, we implemented the following **optional enhancements**:
+
+### ✅ 1. **Model Health Checks & Status Monitoring**
+- Real-time health dashboard showing PC1 and PC2 status
+- Visual status badges (✓ Healthy / ⚠️ Warning / ✗ Error)
+- Displays model names and Ollama URLs
+- Automatic health checks on page load
+
+### ✅ 2. **Performance Metrics Dashboard**
+- Individual stage timing (Stage 1, 2, and 3)
+- Total execution time tracking
+- Visual performance cards with clear formatting
+- Helps identify bottlenecks and optimization opportunities
+
+### ✅ 3. **Dark/Light Mode Toggle**
+- User-selectable theme switcher
+- Persistent theme preference stored in localStorage
+- Smooth transitions between modes
+- Improved accessibility and user comfort
+
+### ✅ 4. **Query History**
+- Stores last 10 queries in browser localStorage
+- One-click query re-execution
+- Helps users track their testing and experimentation
+- Persistent across browser sessions
+
+### ✅ 5. **Enhanced Tabbed Interface**
+- Clean tab navigation between stages
+- Badge indicators showing response counts
+- Color-coded sections for different stages
+- Improved information hierarchy
+
+### ✅ 6. **Visual Workflow Progress Indicators**
+- Real-time stage progression display (1 → 2 → 3)
+- Active stage highlighting
+- Loading spinners with contextual messages
+- Clear visual feedback during processing
+
+### ✅ 7. **Copy to Clipboard Functionality**
+- One-click copying of final chairman answer
+- Individual answer copy buttons
+- User-friendly for sharing results
+- Visual confirmation feedback
+
+### ✅ 8. **Responsive Design**
+- Mobile-friendly layout
+- Adaptive grid system
+- Breakpoints for tablets and phones
+- CSS Grid and Flexbox for modern layouts
+
+**Impact:** These enhancements significantly improve user experience, transparency, and usability compared to the original implementation.
+
+---
+
 ## Project Structure
 
 ```
@@ -376,15 +432,15 @@ We chose to leverage Claude Code to accelerate development and focus on understa
 ## Future Enhancements
 
 Potential improvements for future versions:
-- Add model performance dashboard
-- Implement response time tracking per model
-- Add dark/light mode toggle
 - Enable side-by-side comparison of council answers
-- Add token usage estimation
-- Implement model health monitoring with heartbeat
+- Add diff highlighting between different model outputs
+- Add token usage estimation and tracking
+- Implement collapsible panels for reviews
 - Support for additional local LLM frameworks (GPT4All, Llamafile)
-- Persistent storage of query history
-- Export results to PDF/JSON
+- Export results to PDF/JSON/CSV formats
+- Add model benchmarking and comparison metrics
+- Implement caching for frequently asked queries
+- Add multi-language support for the interface
 
 ---
 

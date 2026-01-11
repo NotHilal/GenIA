@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(tree:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nAdd bonus features and comprehensive documentation\n\nFeatures added:\n- Dark/Light mode toggle with localStorage persistence\n- Real-time performance metrics tracking for all stages\n- Copy to clipboard buttons for answers and final synthesis\n- Query history with browser storage \\(last 10 queries\\)\n- Enhanced health dashboard with detailed PC status\n\nDocumentation:\n- Complete README.md with team info, setup guide, and AI usage statement\n- Performance optimizations documented\n- Troubleshooting guide included\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)"
     ]
   }
 }
