@@ -238,33 +238,33 @@ http://localhost:5000
 
 In addition to the core requirements, we implemented the following **optional enhancements**:
 
-### ✅ 1. **Dark/Light Mode Toggle**
+### 1. **Dark/Light Mode Toggle**
 - User-selectable theme switcher with toggle button
 - Persistent theme preference stored in browser localStorage
 - Smooth transitions between light and dark modes
 - Improved accessibility and reduced eye strain for users
 
-### ✅ 2. **Real-Time Performance Metrics Dashboard**
+### 2. **Real-Time Performance Metrics Dashboard**
 - Individual stage timing breakdown (Stage 1, Stage 2, Stage 3)
 - Total execution time tracking across all stages
 - Visual performance cards displaying timing data
 - Helps identify bottlenecks and monitor system performance
 
-### ✅ 3. **Copy to Clipboard Functionality**
+### 3. **Copy to Clipboard Functionality**
 - One-click copying of individual model answers
 - Copy button for final chairman synthesis
 - User-friendly for sharing and exporting results
 - Visual feedback on successful copy operations
 
-### ✅ 4. **Query History with Browser Storage**
+### 4. **Query History with Browser Storage**
 - Automatically stores last 10 queries in localStorage
 - One-click re-execution of previous queries
 - Persistent across browser sessions
 - Helps users track their testing and experimentation
 
-### ✅ 5. **Enhanced Health Dashboard with PC Status**
+### 5. **Enhanced Health Dashboard with PC Status**
 - Real-time health monitoring for PC1 (Chairman) and PC2 (Council)
-- Visual status badges indicating service health (✓ Healthy / ⚠️ Warning / ✗ Error)
+- Visual status badges indicating service health (✓ Healthy / Warning / ✗ Error)
 - Displays active model names and Ollama API URLs
 - Automatic health checks on page load and refresh capability
 
